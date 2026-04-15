@@ -241,23 +241,20 @@
             repairInput.max = total;
             repairInput.value = 0;
 
-            // Set action form secara dinamis
             form.action = "/lendings/return/" + id;
 
-            // Tampilkan modal (menggunakan class hidden/flex)
             modal.classList.remove('hidden');
-            modal.classList.add('block'); // atau 'flex' tergantung layouting Anda
-            document.body.style.overflow = 'hidden'; // Mencegah scroll pada background
+            modal.classList.add('block'); 
+            document.body.style.overflow = 'hidden'; 
         }
 
         function closeReturnModal() {
             const modal = document.getElementById('returnModal');
             modal.classList.add('hidden');
             modal.classList.remove('block');
-            document.body.style.overflow = 'auto'; // Mengaktifkan scroll kembali
+            document.body.style.overflow = 'auto'; 
         }
 
-        // Menutup modal jika user klik di luar area modal (overlay)
         window.onclick = function(event) {
             const modal = document.getElementById('returnModal');
             if (event.target == modal) {

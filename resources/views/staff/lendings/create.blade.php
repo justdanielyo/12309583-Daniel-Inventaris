@@ -144,7 +144,7 @@
             backgroundColor: 'rgba(255, 255, 255, 0)'
         });
 
-        // FUNGSI PENTING: Menyesuaikan ukuran canvas agar kursor sinkron
+        // Menyesuaikan ukuran canvas
         function resizeCanvas() {
             [{
                 canvas: staffCanvas,
@@ -157,11 +157,10 @@
                 obj.canvas.width = obj.canvas.offsetWidth * ratio;
                 obj.canvas.height = obj.canvas.offsetHeight * ratio;
                 obj.canvas.getContext("2d").scale(ratio, ratio);
-                obj.pad.clear(); // Reset pad saat resize agar tidak pecah
+                obj.pad.clear();
             });
         }
 
-        // Jalankan resize saat load dan saat jendela berubah ukuran
         window.addEventListener("load", resizeCanvas);
         window.addEventListener("resize", resizeCanvas);
 
@@ -210,7 +209,6 @@
             }
         };
 
-        // Role Selector Logic
         const roleSelector = document.getElementById('roleSelector');
         const classField = document.getElementById('classField');
         roleSelector.addEventListener('change', () => {
