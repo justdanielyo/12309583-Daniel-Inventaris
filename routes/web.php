@@ -47,6 +47,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/delete/{id}', [ItemController::class, 'destroy'])->name('destroy');
 
         Route::get('/lending/{id}', [ItemController::class, 'lendingDetail'])->name('lending.detail');
+        // Route::post('/lendings/return/{id}', [LendingController::class, 'returnItem'])->name('lendings.return');
     });
 
     // LENDING

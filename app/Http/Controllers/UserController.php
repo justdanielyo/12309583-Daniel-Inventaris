@@ -40,26 +40,35 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
+            'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'role' => 'required'
+            'role' => 'required|in:admin,staff',
+        ], [
+            'email.unique' => 'Email ini sudah terdaftar. Silakan gunakan email lain.',
+            'email.required' => 'Email wajib diisi.',
+            'role.required' => 'Pilih role terlebih dahulu.',
         ]);
+
+        $firstFourEmail = substr($request->email, 0, 4);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
-            'password' => Hash::make('secret-temporary'),
+            'password' => Hash::make('temporary'),
         ]);
 
-        $firstFourEmail = substr($user->email, 0, 4);
         $passwordRaw = $firstFourEmail . $user->id;
 
-        $user->password = Hash::make($passwordRaw);
-        $user->save();
+        $user->update([
+            'password' => Hash::make($passwordRaw)
+        ]);
 
-        $targetRoute = ($request->role == 'admin') ? 'users.admin' : 'users.staff';
-        return redirect()->route($targetRoute)->with('created_password', $passwordRaw);
+        $targetRoute = ($user->role == 'admin') ? 'users.admin' : 'users.staff';
+
+        return redirect()->route($targetRoute)
+            ->with('success', 'Akun ' . ucfirst($user->role) . ' berhasil dibuat!')
+            ->with('created_password', $passwordRaw);
     }
 
     public function edit($id)

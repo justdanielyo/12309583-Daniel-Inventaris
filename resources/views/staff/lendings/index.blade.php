@@ -24,54 +24,43 @@
         </div>
         <nav class="flex-1 px-4 py-6 space-y-2">
             <p class="text-xs text-indigo-400 uppercase font-semibold px-2 mb-2">Menu</p>
-            <a href="/dashboard"
-                class="flex items-center gap-3 hover:bg-indigo-800 p-3 rounded-lg transition">Dashboard</a>
+            <a href="/dashboard" class="flex items-center gap-3 hover:bg-indigo-800 p-3 rounded-lg transition text-sm">Dashboard</a>
             <p class="text-xs text-indigo-400 uppercase font-semibold px-2 mt-6 mb-2">Items Data</p>
-            <a href="/items" class="flex items-center gap-3 hover:bg-indigo-800 p-3 rounded-lg transition">Items</a>
-            <a href="/lendings"
-                class="flex items-center gap-3 bg-indigo-700 p-3 rounded-lg transition font-semibold">Lending</a>
+            <a href="/items" class="flex items-center gap-3 hover:bg-indigo-800 p-3 rounded-lg transition text-sm">Items</a>
+            <a href="/lendings" class="flex items-center gap-3 bg-indigo-700 p-3 rounded-lg transition font-semibold text-sm">Lending</a>
             <p class="text-xs text-indigo-400 uppercase font-semibold px-2 mt-6 mb-2">Accounts</p>
-            <a href="/users" class="flex items-center gap-3 hover:bg-indigo-800 p-3 rounded-lg transition">Users</a>
+            <a href="/users" class="flex items-center gap-3 hover:bg-indigo-800 p-3 rounded-lg transition text-sm">Users</a>
         </nav>
     </aside>
 
     <main class="flex-1 flex flex-col overflow-y-auto">
         <header class="bg-white shadow-sm px-8 py-4 flex justify-between items-center border-b">
             <div class="flex items-center gap-4">
-                <img src="https://i.pinimg.com/736x/c6/e3/26/c6e32690bfb3e0572b5c92cf6de223a5.jpg"
-                    class="w-10 h-10 rounded-full object-cover">
-                <h2 class="text-lg font-semibold text-gray-700">Welcome Back, <span
-                        class="text-indigo-600 font-bold uppercase">{{ auth()->user()->name }}</span></h2>
+                <img src="https://i.pinimg.com/736x/c6/e3/26/c6e32690bfb3e0572b5c92cf6de223a5.jpg" class="w-10 h-10 rounded-full object-cover border">
+                <h2 class="text-lg font-semibold text-gray-700">Welcome Back, <span class="text-indigo-600 font-bold uppercase">{{ auth()->user()->name }}</span></h2>
             </div>
             <div class="flex items-center gap-6">
                 <span class="text-sm text-gray-500 font-medium">{{ date('d F, Y') }}</span>
-                <form action="/logout" method="POST">@csrf<button type="submit"
-                        class="text-red-500 font-bold text-sm">Logout</button></form>
+                <form action="/logout" method="POST">@csrf<button type="submit" class="text-red-500 font-bold text-sm hover:underline">Logout</button></form>
             </div>
         </header>
 
         <div class="p-8">
             @if (session('success'))
-                <div
-                    class="mb-6 bg-emerald-100 border border-emerald-200 text-emerald-700 px-6 py-4 rounded-xl text-sm font-bold shadow-sm">
-                    {{ session('success') }}
-                </div>
+            <div class="mb-6 bg-emerald-100 border border-emerald-200 text-emerald-700 px-6 py-4 rounded-xl text-sm font-bold shadow-sm flex items-center gap-3">
+                <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                {{ session('success') }}
+            </div>
             @endif
 
             <div class="flex justify-between items-end mb-6">
                 <div>
                     <h1 class="text-2xl font-bold text-gray-800">Lending Table</h1>
-                    <p class="text-gray-400 text-sm">Data of <span class="text-pink-500 font-medium">.lendings</span>
-                    </p>
+                    <p class="text-gray-400 text-sm">Tracking <span class="text-pink-500 font-medium">.school-inventory</span> lending data</p>
                 </div>
                 <div class="flex gap-3">
-                    <a href="/lendings/export"
-                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg font-semibold text-sm transition shadow-md">Export
-                        Excel</a>
-                    <a href="/lendings/create"
-                        class="bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-lg font-semibold text-sm transition shadow-md">
-                        + Add New
-                    </a>
+                    <a href="/lendings/export" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg font-semibold text-sm transition shadow-md">Export Excel</a>
+                    <a href="/lendings/create" class="bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-lg font-semibold text-sm transition shadow-md">+ Add New</a>
                 </div>
             </div>
 
@@ -79,77 +68,168 @@
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-gray-50 border-b">
-                            <th class="px-4 py-4 text-xs font-bold text-gray-500 uppercase">#</th>
-                            <th class="px-4 py-4 text-xs font-bold text-gray-500 uppercase">Item</th>
-                            <th class="px-4 py-4 text-xs font-bold text-gray-500 uppercase">Total</th>
-                            <th class="px-4 py-4 text-xs font-bold text-gray-500 uppercase">Borrower</th>
-                            <th class="px-4 py-4 text-xs font-bold text-gray-500 uppercase">Notes</th>
-                            <th class="px-4 py-4 text-xs font-bold text-gray-500 uppercase">Date</th>
-                            <th class="px-4 py-4 text-xs font-bold text-gray-500 uppercase">Return Date</th>
-                            <th class="px-4 py-4 text-xs font-bold text-gray-500 uppercase">Edited By</th>
-                            <th class="px-4 py-4 text-xs font-bold text-gray-500 uppercase text-center">Action</th>
+                            <th class="px-4 py-4 text-[11px] font-bold text-gray-400 uppercase">#</th>
+                            <th class="px-4 py-4 text-[11px] font-bold text-gray-400 uppercase">Item</th>
+                            <th class="px-4 py-4 text-[11px] font-bold text-gray-400 uppercase">Qty</th>
+                            <th class="px-4 py-4 text-[11px] font-bold text-gray-400 uppercase">Borrower</th>
+                            <th class="px-4 py-4 text-[11px] font-bold text-gray-400 uppercase">Lending Date</th>
+                            <th class="px-4 py-4 text-[11px] font-bold text-gray-400 uppercase">Due Date</th>
+                            <th class="px-4 py-4 text-[11px] font-bold text-gray-400 uppercase">Status</th>
+                            <th class="px-4 py-4 text-[11px] font-bold text-gray-400 uppercase text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y">
                         @foreach ($lendings as $index => $item)
-                            <tr class="hover:bg-gray-50 transition">
-                                <td class="px-4 py-4 text-sm text-gray-600">{{ $index + 1 }}</td>
-                                <td class="px-4 py-4 text-sm font-bold text-gray-800">{{ $item->item->name }}</td>
-                                <td class="px-4 py-4 text-sm text-gray-600">{{ $item->total }}</td>
-                                <td class="px-4 py-4 text-sm text-gray-800 font-medium">{{ $item->name }}</td>
-                                <td class="px-4 py-4 text-sm text-gray-500 italic">
-                                    {{ $item->notes ?? '-' }}
-                                </td>
-                                <td class="px-4 py-4 text-sm text-gray-500">
-                                    {{ \Carbon\Carbon::parse($item->date)->format('M d, Y') }}
-                                </td>
-                                <td class="px-4 py-4">
-                                    @if ($item->returned_at)
-                                        <span class="text-[11px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-500 px-2 py-1 rounded-md">
-                                            {{ \Carbon\Carbon::parse($item->returned_at)->format('M d, Y') }}
-                                        </span>
-                                    @else
-                                        <span class="text-[10px] font-bold text-amber-500 bg-amber-50 border border-amber-400 px-2 py-1 rounded-md uppercase italic">
-                                            Not Returned
-                                        </span>
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-4 py-4 text-sm text-gray-400">{{ $index + 1 }}</td>
+                            <td class="px-4 py-4">
+                                <span class="text-sm font-bold text-gray-800 block">{{ $item->item->name }}</span>
+                                <span class="text-[10px] text-gray-400 italic">{{ $item->notes ?? 'No notes' }}</span>
+                            </td>
+                            <td class="px-4 py-4 text-sm font-semibold text-gray-600">{{ $item->total }}</td>
+                            <td class="px-4 py-4">
+                                <div class="text-sm font-bold text-gray-800">{{ $item->name }}</div>
+                                <div class="flex items-center gap-1.5 mt-0.5">
+                                    <span class="px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded text-[9px] font-bold uppercase border border-indigo-100">
+                                        {{ $item->borrower_role }}
+                                    </span>
+                                    @if($item->class)
+                                    <span class="text-[10px] text-gray-500 font-medium italic">({{ $item->class }})</span>
                                     @endif
-                                </td>
-                                <td class="px-4 py-4 text-sm text-indigo-600 font-semibold">
-                                    {{ $item->user->name ?? 'System' }}
-                                </td>
-                                <td class="px-4 py-4 text-center">
-                                    <div class="flex justify-center gap-2">
-                                        @if (!$item->returned_at)
-                                            <form action="/lendings/return/{{ $item->id }}" method="POST">
-                                                @csrf
-                                                <button type="submit"
-                                                    class="bg-amber-400 hover:bg-amber-500 text-white px-3 py-1.5 rounded-lg text-[11px] font-bold transition shadow-sm">
-                                                    Returned
-                                                </button>
-                                            </form>
-                                        @endif
-                                        <form action="{{ route('lendings.destroy', $item->id) }}" method="POST"
-                                            onsubmit="return confirm('Hapus data peminjaman {{ $item->name }}? Stok akan kembali otomatis.')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-[11px] font-bold transition shadow-sm">
-                                                Delete
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
+                                </div>
+                            </td>
+                            <td class="px-4 py-4 text-sm text-gray-500">
+                                {{ \Carbon\Carbon::parse($item->date)->format('d/m/Y') }}
+                            </td>
+                            <td class="px-4 py-4 text-sm">
+                                @php
+                                $isLate = !$item->returned_at && \Carbon\Carbon::parse($item->due_date)->isPast();
+                                @endphp
+                                <span class="{{ $isLate ? 'text-red-500 font-bold' : 'text-gray-500' }}">
+                                    {{ \Carbon\Carbon::parse($item->due_date)->format('d/m/Y') }}
+                                </span>
+                            </td>
+                            <td class="px-4 py-4">
+                                @if ($item->returned_at)
+                                <div class="flex flex-col">
+                                    <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-500 px-2 py-1 rounded-md w-fit uppercase tracking-tighter">Returned</span>
+                                    <span class="text-[9px] text-gray-400 mt-1">{{ \Carbon\Carbon::parse($item->returned_at)->format('d M, H:i') }}</span>
+                                </div>
+                                @else
+                                @if($isLate)
+                                <span class="text-[10px] font-bold text-red-600 bg-red-50 border border-red-500 px-2 py-1 rounded-md animate-pulse uppercase tracking-tighter">Late</span>
+                                @else
+                                <span class="text-[10px] font-bold text-amber-500 bg-amber-50 border border-amber-400 px-2 py-1 rounded-md uppercase tracking-tighter">Not Returned</span>
+                                @endif
+                                @endif
+                            </td>
+                            <td class="px-4 py-4">
+                                <div class="flex justify-center gap-2">
+                                    @if (!$item->returned_at)
+                                    <button type="button"
+                                        onclick="openReturnModal('{{ $item->id }}', '{{ $item->item->name }}', '{{ $item->total }}')"
+                                        class="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold transition shadow-sm">
+                                        Return Item
+                                    </button>
+                                    @endif
+                                    <form action="{{ route('lendings.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Hapus data peminjaman ini?')">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="bg-gray-100 hover:bg-red-500 hover:text-white text-gray-400 px-3 py-1.5 rounded-lg text-[10px] font-bold transition">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
                         @endforeach
                     </tbody>
                 </table>
                 @if($lendings->isEmpty())
-                    <div class="p-8 text-center text-gray-400">
-                        No lending data available.
-                    </div>
+                <div class="p-12 text-center">
+                    <img src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png" class="w-16 h-16 mx-auto opacity-20 mb-4">
+                    <p class="text-gray-400 text-sm italic">No active lendings found.</p>
+                </div>
                 @endif
             </div>
         </div>
     </main>
+
+    <div id="returnModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+        <div class="bg-white rounded-[2rem] shadow-2xl max-w-2xl w-full overflow-hidden transform transition-all border border-white/20">
+            <div class="bg-emerald-500 p-10 text-white relative">
+                <h3 class="text-3xl font-bold tracking-tight">Return Item</h3>
+                <p class="text-emerald-50 text-base mt-2 opacity-90 font-light">Konfirmasi pengembalian barang dan pengecekan kondisi fisik.</p>
+            </div>
+
+            <form id="returnForm" method="POST" class="p-10 space-y-8">
+                @csrf
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-[0.2em] mb-3">Item Details</label>
+                    <div id="modalItemNameDisplay" class="text-xl font-bold text-gray-800 bg-gray-50 p-6 rounded-2xl border border-gray-100 flex items-center justify-between">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-8">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-[0.2em] mb-3">Total Borrowed</label>
+                        <div class="relative">
+                            <input type="text" id="modalTotalQty" readonly
+                                class="w-full bg-gray-100 border-none text-lg font-bold p-5 rounded-2xl text-gray-500 outline-none cursor-not-allowed">
+                            <span class="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-bold uppercase">Unit</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-red-400 uppercase tracking-[0.2em] mb-3">Broken Items (Repair)</label>
+                        <div class="relative">
+                            <input type="number" name="repair_count" id="repairCount" min="0" value="0" required
+                                class="w-full border-2 border-red-50 bg-red-50/30 text-lg font-bold p-5 rounded-2xl focus:ring-4 focus:ring-red-500/10 focus:border-red-500 outline-none transition-all text-red-600">
+                            <span class="absolute right-5 top-1/2 -translate-y-1/2 text-red-300 text-sm font-bold uppercase">Qty</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-indigo-50 p-5 rounded-2xl border border-indigo-100 flex gap-4 items-start">
+                    <div class="bg-indigo-500 p-2 rounded-lg shrink-0 shadow-lg shadow-indigo-200">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <p class="text-sm text-indigo-700 leading-relaxed font-medium">
+                        Pastikan jumlah barang rusak diinput dengan benar. Barang yang tidak dilaporkan rusak akan dianggap kembali dalam kondisi baik.
+                    </p>
+                </div>
+
+                <div class="flex gap-5 pt-4">
+                    <button type="button" onclick="closeReturnModal()"
+                        class="flex-1 px-8 py-5 bg-gray-100 text-gray-500 rounded-2xl hover:bg-gray-200 transition-all font-bold text-sm uppercase tracking-widest">
+                        BATAL
+                    </button>
+                    <button type="submit"
+                        class="flex-[2] px-8 py-5 bg-emerald-500 text-white rounded-2xl hover:bg-emerald-600 transition-all font-bold text-sm uppercase tracking-widest shadow-xl shadow-emerald-500/40">
+                        CONFIRM RETURN
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openReturnModal(id, itemName, total) {
+            const modal = document.getElementById('returnModal');
+            const form = document.getElementById('returnForm');
+            const repairInput = document.getElementById('repairCount');
+
+            document.getElementById('modalItemNameDisplay').innerText = itemName;
+            document.getElementById('modalTotalQty').value = total;
+            repairInput.max = total;
+            repairInput.value = 0;
+
+            form.action = "/lendings/return/" + id;
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+    </script>
 </body>
+
 </html>

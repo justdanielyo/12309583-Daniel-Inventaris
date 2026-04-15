@@ -8,7 +8,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Poppins', sans-serif; }
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
     </style>
 </head>
 
@@ -73,16 +75,18 @@
                             @enderror
                         </div>
                         @error('name')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div class="mb-6">
                         <label class="block font-semibold mb-2 text-gray-700">Email</label>
                         <div class="relative">
+                            {{-- Class @error akan membuat border jadi merah jika email duplikat --}}
                             <input type="email" name="email" value="{{ old('email') }}"
                                 class="w-full p-3 border rounded-lg outline-none transition @error('email') border-red-500 @else border-gray-300 focus:border-blue-500 @enderror"
                                 placeholder="yukisorimachireal@gmail.com">
+
                             @error('email')
                             <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                 <svg class="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
@@ -91,15 +95,17 @@
                             </div>
                             @enderror
                         </div>
+
+                        {{-- Ini akan menampilkan tulisan "Email ini sudah terdaftar..." --}}
                         @error('email')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div class="mb-8">
                         <label class="block font-semibold mb-2 text-gray-700">Role</label>
                         <div class="relative">
-                            <select name="role" 
+                            <select name="role"
                                 class="w-full p-3 border rounded-lg outline-none transition bg-white appearance-none @error('role') border-red-500 @else border-gray-300 focus:border-blue-500 @enderror">
                                 <option value="" selected disabled>Select Role</option>
                                 <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>admin</option>
@@ -107,18 +113,18 @@
                             </select>
                             <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                 @error('role')
-                                    <svg class="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                                    </svg>
+                                <svg class="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                </svg>
                                 @else
-                                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                    </svg>
+                                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
                                 @enderror
                             </div>
                         </div>
                         @error('role')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -131,4 +137,5 @@
         </div>
     </main>
 </body>
+
 </html>

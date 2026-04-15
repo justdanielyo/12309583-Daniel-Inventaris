@@ -14,12 +14,14 @@ class LendingController extends Controller
 {
     public function index()
     {
+        // Mengambil data lengkap dengan relasi
         $lendings = Lending::with(['item', 'user'])->latest()->get();
         return view('staff.lendings.index', compact('lendings'));
     }
 
     public function create()
     {
+        // Hanya menampilkan item yang stoknya tersedia (Total - Repair - Lending > 0)
         $items = Item::all()->filter(function ($item) {
             return ($item->total - ($item->repair + $item->lending)) > 0;
         });
@@ -29,12 +31,23 @@ class LendingController extends Controller
 
     public function store(Request $request)
     {
+        // 1. Validasi Input sesuai dengan kolom baru di Migration
         $request->validate([
             'name' => 'required|string|max:255',
-            'items' => 'required|array',
+            'borrower_role' => 'required|in:Siswa,Guru/Staff,Tamu',
+            'class' => 'required_if:borrower_role,Siswa,Tamu|nullable|string|max:100',
+            'due_date' => 'required|date|after_or_equal:today',
+            'items' => 'required|array|min:1',
             'items.*.item_id' => 'required|exists:items,id',
             'items.*.total' => 'required|integer|min:1',
             'notes' => 'nullable|string',
+            'staff_signature' => 'required|string',
+            'borrower_signature' => 'required|string',
+        ], [
+            'due_date.after_or_equal' => 'Tanggal kembali tidak boleh di masa lalu.',
+            'staff_signature.required' => 'Tanda tangan staff wajib diisi.',
+            'borrower_signature.required' => 'Tanda tangan peminjam wajib diisi.',
+            'class.required_if' => 'Kolom Kelas/Instansi wajib diisi untuk siswa atau tamu.'
         ]);
 
         try {
@@ -42,53 +55,66 @@ class LendingController extends Controller
                 foreach ($request->items as $itemData) {
                     $item = Item::lockForUpdate()->find($itemData['item_id']);
 
-                    // Hitung Avalaible
                     $available = $item->total - ($item->repair + $item->lending);
 
                     if ($itemData['total'] > $available) {
-                        throw new \Exception("Total item more than available!");
+                        throw new \Exception("Stok item '{$item->name}' tidak mencukupi! (Tersedia: {$available})");
                     }
 
                     Lending::create([
                         'name' => $request->name,
+                        'borrower_role' => $request->borrower_role,
+                        'class' => $request->class,
                         'item_id' => $itemData['item_id'],
                         'total' => $itemData['total'],
-                        'notes' => $request->notes,
                         'date' => now(),
+                        'due_date' => $request->due_date,
+                        'notes' => $request->notes,
                         'user_id' => Auth::id(),
+                        'staff_signature' => $request->staff_signature,
+                        'borrower_signature' => $request->borrower_signature,
                     ]);
 
-                    // Tambah jumlah lending pada item
                     $item->increment('lending', $itemData['total']);
                 }
             });
 
             return redirect()->route('lendings.index')->with('success', 'Peminjaman berhasil dicatat!');
         } catch (\Exception $e) {
-            return redirect()->back()->withInput()->with('error', $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Gagal menyimpan: ' . $e->getMessage());
         }
     }
 
-    public function returnItem($id)
+    public function returnItem(Request $request, $id)
     {
+        $request->validate([
+            'repair_count' => 'required|integer|min:0'
+        ]);
+
         try {
-            DB::transaction(function () use ($id) {
+            DB::transaction(function () use ($request, $id) {
                 $lending = Lending::findOrFail($id);
+                $item = Item::lockForUpdate()->find($lending->item_id);
 
                 if ($lending->returned_at) {
-                    throw new \Exception('Item is already returned!');
+                    throw new \Exception("Barang ini sudah dikembalikan sebelumnya.");
                 }
 
-                // Kurangi angka lending pada item (Available otomatis naik)
-                $item = Item::lockForUpdate()->find($lending->item_id);
+                $lending->update([
+                    'returned_at' => now()
+                ]);
+
                 $item->decrement('lending', $lending->total);
 
-                $lending->update(['returned_at' => now()]);
+                if ($request->repair_count > 0) {
+                    $actualRepair = min($request->repair_count, $lending->total);
+                    $item->increment('repair', $actualRepair);
+                }
             });
 
-            return redirect()->back()->with('success', 'Item is returned!');
+            return redirect()->route('lendings.index')->with('success', 'Barang berhasil dikembalikan dan stok diperbarui.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal memproses pengembalian: ' . $e->getMessage());
         }
     }
 
@@ -98,7 +124,7 @@ class LendingController extends Controller
             DB::transaction(function () use ($id) {
                 $lending = Lending::findOrFail($id);
 
-                // Jika dihapus tapi BELUM dikembalikan, dikembalikan stoknya
+                // Jika data dihapus tapi barang belum balik, kembalikan stok item dulu
                 if (!$lending->returned_at) {
                     $item = Item::lockForUpdate()->find($lending->item_id);
                     if ($item) {
@@ -109,7 +135,7 @@ class LendingController extends Controller
                 $lending->delete();
             });
 
-            return redirect()->back()->with('success', 'Data peminjaman dihapus!');
+            return redirect()->back()->with('success', 'Data peminjaman berhasil dihapus!');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal menghapus: ' . $e->getMessage());
         }

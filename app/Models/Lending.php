@@ -10,13 +10,18 @@ class Lending extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name',        // Nama peminjam
-        'item_id',     // ID Barang
-        'user_id',     // ID Staff yang menginput
-        'total',       // Jumlah pinjam
-        'notes',       // Catatan
-        'date',        // Tanggal pinjam
-        'returned_at'  // Tanggal kembali
+        'name',
+        'borrower_role',
+        'class',
+        'item_id',
+        'total',
+        'date',
+        'due_date',
+        'notes',
+        'user_id',
+        'staff_signature',
+        'borrower_signature',
+        'returned_at'
     ];
 
     // Relasi ke Item (Barang yang dipinjam)
