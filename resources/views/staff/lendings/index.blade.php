@@ -167,62 +167,63 @@
         </div>
     </main>
 
-    <div id="returnModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm px-4">
-        <div class="bg-white rounded-[2rem] shadow-2xl max-w-2xl w-full overflow-hidden transform transition-all border border-white/20">
-            <div class="bg-emerald-500 p-10 text-white relative">
-                <h3 class="text-3xl font-bold tracking-tight">Return Item</h3>
-                <p class="text-emerald-50 text-base mt-2 opacity-90 font-light">Konfirmasi pengembalian barang dan pengecekan kondisi fisik.</p>
-            </div>
+    <div id="returnModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity backdrop-blur-sm"></div>
 
-            <form id="returnForm" method="POST" class="p-10 space-y-8">
-                @csrf
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-[0.2em] mb-3">Item Details</label>
-                    <div id="modalItemNameDisplay" class="text-xl font-bold text-gray-800 bg-gray-50 p-6 rounded-2xl border border-gray-100 flex items-center justify-between">
-                    </div>
-                </div>
+        <div class="relative flex items-center justify-center min-h-screen p-4">
+            <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full overflow-hidden transform transition-all">
 
-                <div class="grid grid-cols-2 gap-8">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-[0.2em] mb-3">Total Borrowed</label>
-                        <div class="relative">
-                            <input type="text" id="modalTotalQty" readonly
-                                class="w-full bg-gray-100 border-none text-lg font-bold p-5 rounded-2xl text-gray-500 outline-none cursor-not-allowed">
-                            <span class="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-bold uppercase">Unit</span>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-red-400 uppercase tracking-[0.2em] mb-3">Broken Items (Repair)</label>
-                        <div class="relative">
-                            <input type="number" name="repair_count" id="repairCount" min="0" value="0" required
-                                class="w-full border-2 border-red-50 bg-red-50/30 text-lg font-bold p-5 rounded-2xl focus:ring-4 focus:ring-red-500/10 focus:border-red-500 outline-none transition-all text-red-600">
-                            <span class="absolute right-5 top-1/2 -translate-y-1/2 text-red-300 text-sm font-bold uppercase">Qty</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-indigo-50 p-5 rounded-2xl border border-indigo-100 flex gap-4 items-start">
-                    <div class="bg-indigo-500 p-2 rounded-lg shrink-0 shadow-lg shadow-indigo-200">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                <div class="bg-emerald-500 p-6 text-white text-center">
+                    <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3m9 14V5a2 2 0 00-2-2H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2z"></path>
                         </svg>
                     </div>
-                    <p class="text-sm text-indigo-700 leading-relaxed font-medium">
-                        Pastikan jumlah barang rusak diinput dengan benar. Barang yang tidak dilaporkan rusak akan dianggap kembali dalam kondisi baik.
-                    </p>
+                    <h3 class="text-xl font-bold">Return Item</h3>
+                    <p class="text-emerald-50 text-xs opacity-90 mt-1">Konfirmasi pengembalian & cek kondisi barang</p>
                 </div>
 
-                <div class="flex gap-5 pt-4">
-                    <button type="button" onclick="closeReturnModal()"
-                        class="flex-1 px-8 py-5 bg-gray-100 text-gray-500 rounded-2xl hover:bg-gray-200 transition-all font-bold text-sm uppercase tracking-widest">
-                        BATAL
-                    </button>
-                    <button type="submit"
-                        class="flex-[2] px-8 py-5 bg-emerald-500 text-white rounded-2xl hover:bg-emerald-600 transition-all font-bold text-sm uppercase tracking-widest shadow-xl shadow-emerald-500/40">
-                        CONFIRM RETURN
-                    </button>
-                </div>
-            </form>
+                <form id="returnForm" method="POST" class="p-6 space-y-5">
+                    @csrf
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Item Name</label>
+                        <div id="modalItemNameDisplay" class="text-lg font-bold text-gray-800"></div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2">Total Borrowed</label>
+                            <input type="text" id="modalTotalQty" readonly
+                                class="w-full bg-gray-100 border-none font-bold p-3 rounded-lg text-gray-500 outline-none cursor-not-allowed text-center">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-red-400 uppercase mb-2">Broken (Repair)</label>
+                            <input type="number" name="repair_count" id="repairCount" min="0" value="0" required
+                                class="w-full border-2 border-red-50 bg-red-50/30 font-bold p-3 rounded-lg focus:border-red-500 outline-none transition-all text-red-600 text-center">
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3 items-start bg-amber-50 p-3 rounded-lg border border-amber-100">
+                        <svg class="w-5 h-5 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <p class="text-[11px] text-amber-700 leading-tight">
+                            Barang yang tidak dilaporkan rusak dianggap kembali dalam kondisi baik.
+                        </p>
+                    </div>
+
+                    <div class="flex justify-center gap-3 pt-2">
+                        <button type="button" onclick="closeReturnModal()"
+                            class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition">
+                            Batal
+                        </button>
+                        <button type="submit"
+                            class="flex-[1.5] bg-emerald-500 hover:bg-emerald-600 text-white py-3 rounded-xl font-bold text-xs uppercase tracking-wider shadow-lg shadow-emerald-200 transition">
+                            Confirm Return
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -232,16 +233,38 @@
             const form = document.getElementById('returnForm');
             const repairInput = document.getElementById('repairCount');
 
+            // Isi data ke dalam modal
             document.getElementById('modalItemNameDisplay').innerText = itemName;
             document.getElementById('modalTotalQty').value = total;
+
+            // Atur batas maksimal input rusak sesuai jumlah yang dipinjam
             repairInput.max = total;
             repairInput.value = 0;
 
+            // Set action form secara dinamis
             form.action = "/lendings/return/" + id;
 
+            // Tampilkan modal (menggunakan class hidden/flex)
             modal.classList.remove('hidden');
-            modal.classList.add('flex');
+            modal.classList.add('block'); // atau 'flex' tergantung layouting Anda
+            document.body.style.overflow = 'hidden'; // Mencegah scroll pada background
+        }
+
+        function closeReturnModal() {
+            const modal = document.getElementById('returnModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('block');
+            document.body.style.overflow = 'auto'; // Mengaktifkan scroll kembali
+        }
+
+        // Menutup modal jika user klik di luar area modal (overlay)
+        window.onclick = function(event) {
+            const modal = document.getElementById('returnModal');
+            if (event.target == modal) {
+                closeReturnModal();
+            }
         }
     </script>
 </body>
+
 </html>
