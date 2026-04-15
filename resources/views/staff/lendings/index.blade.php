@@ -58,7 +58,20 @@
                     <h1 class="text-2xl font-bold text-gray-800">Lending Table</h1>
                     <p class="text-gray-400 text-sm">Tracking <span class="text-pink-500 font-medium">.school-inventory</span> lending data</p>
                 </div>
-                <div class="flex gap-3">
+                <div class="flex items-center gap-3">
+                    <form action="{{ route('lendings.index') }}" method="GET" class="flex items-center gap-2">
+                        <select name="filter" onchange="this.form.submit()"
+                            class="bg-white border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 shadow-sm outline-none">
+                            <option value="">All Time</option>
+                            <option value="today" {{ request('filter') == 'today' ? 'selected' : '' }}>Today</option>
+                            <option value="last_week" {{ request('filter') == 'last_week' ? 'selected' : '' }}>Last 7 Days</option>
+                        </select>
+
+                        @if(request('filter'))
+                        <a href="{{ route('lendings.index') }}" class="text-xs text-red-500 hover:underline font-bold">Reset</a>
+                        @endif
+                    </form>
+
                     <a href="/lendings/export" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg font-semibold text-sm transition shadow-md">Export Excel</a>
                     <a href="/lendings/create" class="bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-lg font-semibold text-sm transition shadow-md">+ Add New</a>
                 </div>
@@ -231,5 +244,4 @@
         }
     </script>
 </body>
-
 </html>

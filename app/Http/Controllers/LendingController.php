@@ -12,10 +12,24 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class LendingController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Mengambil data lengkap dengan relasi
-        $lendings = Lending::with(['item', 'user'])->latest()->get();
+        $query = Lending::with(['item', 'user']);
+
+        // Logika Filter
+        if ($request->has('filter')) {
+            if ($request->filter == 'last_week') {
+                // Mengambil data dari 7 hari yang lalu sampai sekarang
+                $query->whereBetween('date', [
+                    now()->subDays(7)->startOfDay(),
+                    now()->endOfDay()
+                ]);
+            } elseif ($request->filter == 'today') {
+                $query->whereDate('date', now()->today());
+            }
+        }
+
+        $lendings = $query->latest()->get();
         return view('staff.lendings.index', compact('lendings'));
     }
 
