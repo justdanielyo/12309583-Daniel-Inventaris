@@ -22,8 +22,10 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
+            'name' => 'required|unique:categories,name',
             'division_pj' => 'required'
+        ], [
+            'name.unique' => 'Nama kategori ini sudah tersedia, silakan gunakan nama lain.',
         ]);
 
         Category::create($request->all());
@@ -54,7 +56,7 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         $category = Category::findOrFail($id);
-        
+
         // Cek apakah kategori masih memiliki barang
         if ($category->items()->count() > 0) {
             return redirect('/categories')->with('error', 'Kategori tidak bisa dihapus karena masih memiliki barang!');

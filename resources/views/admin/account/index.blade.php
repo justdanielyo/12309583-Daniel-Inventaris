@@ -72,40 +72,57 @@
         <div class="p-8">
 
             @if (session('created_password'))
-                <div class="mb-6 flex items-center p-4 text-emerald-800 border-l-4 border-emerald-500 bg-emerald-50 shadow-md rounded-r-lg transition-all"
-                    role="alert">
-                    <svg class="flex-shrink-0 w-5 h-5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                            clip-rule="evenodd"></path>
-                    </svg>
-                    <div class="ml-3">
-                        <p class="text-sm font-bold">Akun Berhasil Dibuat!</p>
-                        <p class="text-sm">Password otomatis untuk akun ini adalah:
-                            <span
-                                class="bg-white px-2 py-0.5 rounded border border-emerald-300 font-mono font-bold text-emerald-600">
-                                {{ session('created_password') }}
-                            </span>
-                        </p>
-                    </div>
+            <div class="mb-6 flex items-center p-4 text-emerald-800 border-l-4 border-emerald-500 bg-emerald-50 shadow-md rounded-r-lg transition-all"
+                role="alert">
+                <svg class="flex-shrink-0 w-5 h-5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"></path>
+                </svg>
+                <div class="ml-3">
+                    <p class="text-sm font-bold">Akun Berhasil Dibuat!</p>
+                    <p class="text-sm">Password otomatis untuk akun ini adalah:
+                        <span
+                            class="bg-white px-2 py-0.5 rounded border border-emerald-300 font-mono font-bold text-emerald-600">
+                            {{ session('created_password') }}
+                        </span>
+                    </p>
                 </div>
+            </div>
             @endif
 
             @if (session('success'))
-                <div id="successAlert"
-                    class="mb-6 flex items-center p-4 text-emerald-800 border-l-4 border-emerald-500 bg-emerald-50 shadow-md rounded-r-lg transition-all"
-                    role="alert">
-                    <div class="ml-3 flex-1">
-                        <p class="text-sm font-bold">{{ session('success') }}</p>
-                    </div>
-                    <button onclick="document.getElementById('successAlert').remove()"
-                        class="ml-auto text-emerald-500 hover:text-emerald-700">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
+            <div id="successAlert"
+                class="mb-6 flex items-center p-4 text-emerald-800 border-l-4 border-emerald-500 bg-emerald-50 shadow-md rounded-r-lg transition-all"
+                role="alert">
+                <div class="ml-3 flex-1">
+                    <p class="text-sm font-bold">{{ session('success') }}</p>
                 </div>
+                <button onclick="document.getElementById('successAlert').remove()"
+                    class="ml-auto text-emerald-500 hover:text-emerald-700">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            @endif
+
+            @if (session('error'))
+            <div id="errorAlert"
+                class="mb-6 flex items-center p-4 text-red-800 border-l-4 border-red-500 bg-red-50 shadow-md rounded-r-lg transition-all"
+                role="alert">
+                <div class="ml-3 flex-1">
+                    <p class="text-sm font-bold">{{ session('error') }}</p>
+                </div>
+                <button onclick="document.getElementById('errorAlert').remove()"
+                    class="ml-auto text-red-500 hover:text-red-700">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
             @endif
 
             <div class="mb-6 flex justify-between items-end">
@@ -138,20 +155,35 @@
                     </thead>
                     <tbody class="divide-y">
                         @foreach ($users as $index => $user)
-                            <tr class="hover:bg-gray-50 transition">
-                                <td class="px-6 py-4 text-sm text-gray-600">{{ $index + 1 }}</td>
-                                <td class="px-6 py-4 text-sm font-medium text-gray-800">{{ $user->name }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-600">{{ $user->email }}</td>
-                                <td class="px-6 py-4 text-center">
-                                    <a href="{{ route('users.edit', $user->id) }}"
-                                        class="bg-indigo-500 text-white px-4 py-1.5 rounded-md text-sm hover:bg-indigo-600 transition inline-block">Edit</a>
-                                    <button type="button"
-                                        onclick="openDeleteModal('{{ route('users.destroy', $user->id) }}')"
-                                        class="bg-red-500 text-white px-4 py-1.5 rounded-md text-sm ml-2 hover:bg-red-600 transition">
-                                        Delete
-                                    </button>
-                                </td>
-                            </tr>
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-6 py-4 text-sm text-gray-600">{{ $index + 1 }}</td>
+                            <td class="px-6 py-4 text-sm font-medium text-gray-800">
+                                {{ $user->name }}
+                                @if($user->id === auth()->id())
+                                <span class="ml-2 text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full">You</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-600">{{ $user->email }}</td>
+                            <td class="px-6 py-4 text-center">
+                                <a href="{{ route('users.edit', $user->id) }}"
+                                    class="bg-indigo-500 text-white px-4 py-1.5 rounded-md text-sm hover:bg-indigo-600 transition inline-block">Edit</a>
+
+                                @if($user->id !== auth()->id())
+                                {{-- Tombol Delete hanya muncul jika user BUKAN akun yang sedang login --}}
+                                <button type="button"
+                                    onclick="openDeleteModal('{{ route('users.destroy', $user->id) }}')"
+                                    class="bg-red-500 text-white px-4 py-1.5 rounded-md text-sm ml-2 hover:bg-red-600 transition">
+                                    Delete
+                                </button>
+                                @else
+                                {{-- Opsional: Tampilkan button mati/disabled agar admin tahu kenapa tidak bisa dihapus --}}
+                                <button type="button" disabled
+                                    class="bg-gray-300 text-gray-500 cursor-not-allowed px-4 py-1.5 rounded-md text-sm ml-2">
+                                    In Use
+                                </button>
+                                @endif
+                            </td>
+                        </tr>
                         @endforeach
                     </tbody>
                 </table>
@@ -207,4 +239,5 @@
         }
     </script>
 </body>
+
 </html>

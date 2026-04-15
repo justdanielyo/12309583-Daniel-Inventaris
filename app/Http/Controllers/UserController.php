@@ -49,14 +49,14 @@ class UserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
-            'password' => Hash::make('secret-temporary'), 
+            'password' => Hash::make('secret-temporary'),
         ]);
 
         $firstFourEmail = substr($user->email, 0, 4);
         $passwordRaw = $firstFourEmail . $user->id;
 
         $user->password = Hash::make($passwordRaw);
-        $user->save(); 
+        $user->save();
 
         $targetRoute = ($request->role == 'admin') ? 'users.admin' : 'users.staff';
         return redirect()->route($targetRoute)->with('created_password', $passwordRaw);
@@ -112,11 +112,22 @@ class UserController extends Controller
 
     public function destroy($id)
     {
+        if ($id == auth()->id()) {
+            return redirect()->back()->with('error', 'Gagal! Anda tidak dapat menghapus akun yang sedang Anda gunakan.');
+        }
+
         $user = User::findOrFail($id);
         $user->delete();
-        return back()->with('success', 'Akun berhasil dihapus!');
+
+        return redirect()->back()->with('success', 'Akun berhasil dihapus.');
     }
 
-    public function exportAdmin() { return Excel::download(new UsersExport('admin'), 'admin-accounts.xlsx'); }
-    public function exportStaff() { return Excel::download(new UsersExport('staff'), 'staff-accounts.xlsx'); }
+    public function exportAdmin()
+    {
+        return Excel::download(new UsersExport('admin'), 'admin-accounts.xlsx');
+    }
+    public function exportStaff()
+    {
+        return Excel::download(new UsersExport('staff'), 'staff-accounts.xlsx');
+    }
 }

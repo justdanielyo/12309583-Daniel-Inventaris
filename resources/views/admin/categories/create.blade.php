@@ -8,7 +8,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Poppins', sans-serif; }
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
     </style>
 </head>
 
@@ -61,15 +63,20 @@
                     <!-- Input Name -->
                     <div class="mb-6">
                         <label class="block font-semibold mb-2 text-gray-700">Name</label>
-                        <input type="text" name="name" placeholder="Contoh: Alat Dapur" 
-                            class="w-full p-3 border rounded-lg outline-none focus:border-blue-500 transition @error('name') border-red-500 @enderror" value="{{ old('name') }}">
-                        @error('name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                        <input type="text" name="name" placeholder="Contoh: Alat Dapur"
+                            class="w-full p-3 border rounded-lg outline-none focus:border-blue-500 transition @error('name') border-red-500 @enderror"
+                            value="{{ old('name') }}">
+
+                        {{-- Pesan error ini akan otomatis muncul jika validasi unique gagal --}}
+                        @error('name')
+                        <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                        @enderror
                     </div>
 
                     <!-- Select Division PJ -->
                     <div class="mb-8">
                         <label class="block font-semibold mb-2 text-gray-700">Division PJ</label>
-                        <select name="division_pj" 
+                        <select name="division_pj"
                             class="w-full p-3 border rounded-lg outline-none focus:border-blue-500 transition @error('division_pj') border-red-500 @enderror">
                             <option value="">Select Division PJ</option>
                             <option value="Sarpras" {{ old('division_pj') == 'Sarpras' ? 'selected' : '' }}>Sarpras</option>
@@ -88,4 +95,5 @@
         </div>
     </main>
 </body>
+
 </html>
