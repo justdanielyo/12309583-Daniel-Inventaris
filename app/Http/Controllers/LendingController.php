@@ -16,17 +16,13 @@ class LendingController extends Controller
     {
         $query = Lending::with(['item', 'user']);
 
-        // Logika Filter
-        if ($request->has('filter')) {
-            if ($request->filter == 'last_week') {
-                // Mengambil data dari 7 hari yang lalu sampai sekarang
-                $query->whereBetween('date', [
-                    now()->subDays(7)->startOfDay(),
-                    now()->endOfDay()
-                ]);
-            } elseif ($request->filter == 'today') {
-                $query->whereDate('date', now()->today());
-            }
+        // Filter Range Tanggal
+        if ($request->start_date && $request->end_date) {
+            $query->whereBetween('date', [$request->start_date . ' 00:00:00', $request->end_date . ' 23:59:59']);
+        } elseif ($request->start_date) {
+            $query->whereDate('date', '>=', $request->start_date);
+        } elseif ($request->end_date) {
+            $query->whereDate('date', '<=', $request->end_date);
         }
 
         $lendings = $query->latest()->get();
@@ -154,9 +150,11 @@ class LendingController extends Controller
             return redirect()->back()->with('error', 'Gagal menghapus: ' . $e->getMessage());
         }
     }
-
-    public function export()
+    public function export(Request $request)
     {
-        return Excel::download(new LendingExport, 'lendings.xlsx');
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
+
+        return Excel::download(new LendingExport($startDate, $endDate), 'lending_report.xlsx');
     }
 }

@@ -60,19 +60,29 @@
                 </div>
                 <div class="flex items-center gap-3">
                     <form action="{{ route('lendings.index') }}" method="GET" class="flex items-center gap-2">
-                        <select name="filter" onchange="this.form.submit()"
-                            class="bg-white border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 shadow-sm outline-none">
-                            <option value="">All Time</option>
-                            <option value="today" {{ request('filter') == 'today' ? 'selected' : '' }}>Today</option>
-                            <option value="last_week" {{ request('filter') == 'last_week' ? 'selected' : '' }}>Last 7 Days</option>
-                        </select>
+                        <div class="flex items-center bg-white border border-gray-300 rounded-lg px-2 shadow-sm">
+                            <input type="date" name="start_date" value="{{ request('start_date') }}"
+                                class="bg-transparent text-gray-700 text-xs p-2 outline-none" title="Start Date">
+                            <span class="text-gray-400 text-xs">to</span>
+                            <input type="date" name="end_date" value="{{ request('end_date') }}"
+                                class="bg-transparent text-gray-700 text-xs p-2 outline-none" title="End Date">
+                            <button type="submit" class="ml-1 p-1 text-indigo-600 hover:bg-indigo-50 rounded">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </button>
+                        </div>
 
-                        @if(request('filter'))
-                        <a href="{{ route('lendings.index') }}" class="text-xs text-red-500 hover:underline font-bold">Reset</a>
+                        @if(request('start_date') || request('end_date'))
+                        <a href="{{ route('lendings.index') }}" class="text-xs text-red-500 hover:underline font-bold px-1">Reset</a>
                         @endif
                     </form>
 
-                    <a href="/lendings/export" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg font-semibold text-sm transition shadow-md">Export Excel</a>
+                    <a href="{{ route('lendings.export', ['start_date' => request('start_date'), 'end_date' => request('end_date')]) }}"
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg font-semibold text-sm transition shadow-md">
+                        Export Excel
+                    </a>
+
                     <a href="/lendings/create" class="bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-lg font-semibold text-sm transition shadow-md">+ Add New</a>
                 </div>
             </div>
@@ -169,10 +179,8 @@
 
     <div id="returnModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
         <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity backdrop-blur-sm"></div>
-
         <div class="relative flex items-center justify-center min-h-screen p-4">
             <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full overflow-hidden transform transition-all">
-
                 <div class="bg-emerald-500 p-6 text-white text-center">
                     <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
                         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -203,15 +211,6 @@
                         </div>
                     </div>
 
-                    <div class="flex gap-3 items-start bg-amber-50 p-3 rounded-lg border border-amber-100">
-                        <svg class="w-5 h-5 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <p class="text-[11px] text-amber-700 leading-tight">
-                            Barang yang tidak dilaporkan rusak dianggap kembali dalam kondisi baik.
-                        </p>
-                    </div>
-
                     <div class="flex justify-center gap-3 pt-2">
                         <button type="button" onclick="closeReturnModal()"
                             class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition">
@@ -232,34 +231,21 @@
             const modal = document.getElementById('returnModal');
             const form = document.getElementById('returnForm');
             const repairInput = document.getElementById('repairCount');
-
-            // Isi data ke dalam modal
             document.getElementById('modalItemNameDisplay').innerText = itemName;
             document.getElementById('modalTotalQty').value = total;
-
-            // Atur batas maksimal input rusak sesuai jumlah yang dipinjam
             repairInput.max = total;
             repairInput.value = 0;
-
             form.action = "/lendings/return/" + id;
-
             modal.classList.remove('hidden');
-            modal.classList.add('block'); 
-            document.body.style.overflow = 'hidden'; 
+            modal.classList.add('block');
+            document.body.style.overflow = 'hidden';
         }
 
         function closeReturnModal() {
             const modal = document.getElementById('returnModal');
             modal.classList.add('hidden');
             modal.classList.remove('block');
-            document.body.style.overflow = 'auto'; 
-        }
-
-        window.onclick = function(event) {
-            const modal = document.getElementById('returnModal');
-            if (event.target == modal) {
-                closeReturnModal();
-            }
+            document.body.style.overflow = 'auto';
         }
     </script>
 </body>
