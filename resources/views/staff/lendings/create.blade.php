@@ -9,7 +9,9 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Poppins', sans-serif; }
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
     </style>
 </head>
 
@@ -49,13 +51,13 @@
                     @csrf
 
                     @if ($errors->any())
-                        <div class="mb-6 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
-                            <ul class="list-disc pl-5">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
+                    <div class="mb-6 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+                        <ul class="list-disc pl-5">
+                            @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
                     @endif
 
                     <div class="grid grid-cols-2 gap-6 mb-6">
@@ -93,7 +95,7 @@
                         <div class="flex gap-4 items-center bg-gray-50 p-4 rounded-lg border">
                             <select name="items[0][item_id]" class="flex-1 border-gray-200 border px-4 py-2 rounded-lg outline-none">
                                 @foreach($items as $item)
-                                    <option value="{{ $item->id }}">{{ $item->name }} (Available: {{ $item->total - ($item->repair + $item->lending) }})</option>
+                                <option value="{{ $item->id }}">{{ $item->name }} (Available: {{ $item->total - ($item->repair + $item->lending) }})</option>
                                 @endforeach
                             </select>
                             <input type="number" name="items[0][total]" min="1" value="1" placeholder="Qty"
@@ -101,23 +103,24 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-8 mb-8">
-                        <div>
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2">Staff Signature</label>
-                            <div class="border rounded-lg bg-gray-50 h-32 relative">
-                                <canvas id="staffCanvas" class="w-full h-full"></canvas>
-                            </div>
-                            <input type="hidden" name="staff_signature" id="staff_signature">
-                            <button type="button" onclick="staffPad.clear()" class="text-[10px] text-red-500 mt-1 uppercase font-bold">Clear</button>
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2">Staff Signature</label>
+                        <div id="staffContainer" class="border-2 rounded-lg bg-gray-50 h-32 relative transition-all">
+                            <canvas id="staffCanvas" class="w-full h-full touch-none cursor-crosshair"></canvas>
                         </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2">Borrower Signature</label>
-                            <div class="border rounded-lg bg-gray-50 h-32 relative">
-                                <canvas id="borrowerCanvas" class="w-full h-full"></canvas>
-                            </div>
-                            <input type="hidden" name="borrower_signature" id="borrower_signature">
-                            <button type="button" onclick="borrowerPad.clear()" class="text-[10px] text-red-500 mt-1 uppercase font-bold">Clear</button>
+                        <p id="staffError" class="hidden text-[10px] text-red-500 mt-1 font-bold italic">Tanda tangan staff wajib diisi!</p>
+                        <input type="hidden" name="staff_signature" id="staff_signature">
+                        <button type="button" onclick="clearStaff()" class="text-[10px] text-red-500 mt-1 uppercase font-bold hover:underline">Clear</button>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2">Borrower Signature</label>
+                        <div id="borrowerContainer" class="border-2 rounded-lg bg-gray-50 h-32 relative transition-all">
+                            <canvas id="borrowerCanvas" class="w-full h-full touch-none cursor-crosshair"></canvas>
                         </div>
+                        <p id="borrowerError" class="hidden text-[10px] text-red-500 mt-1 font-bold italic">Tanda tangan peminjam wajib diisi!</p>
+                        <input type="hidden" name="borrower_signature" id="borrower_signature">
+                        <button type="button" onclick="clearBorrower()" class="text-[10px] text-red-500 mt-1 uppercase font-bold hover:underline">Clear</button>
                     </div>
 
                     <div class="flex gap-3">
@@ -130,19 +133,84 @@
     </main>
 
     <script>
-        const staffPad = new SignaturePad(document.getElementById('staffCanvas'));
-        const borrowerPad = new SignaturePad(document.getElementById('borrowerCanvas'));
+        const staffCanvas = document.getElementById('staffCanvas');
+        const borrowerCanvas = document.getElementById('borrowerCanvas');
 
+        // Inisialisasi Signature Pad
+        const staffPad = new SignaturePad(staffCanvas, {
+            backgroundColor: 'rgba(255, 255, 255, 0)'
+        });
+        const borrowerPad = new SignaturePad(borrowerCanvas, {
+            backgroundColor: 'rgba(255, 255, 255, 0)'
+        });
+
+        // FUNGSI PENTING: Menyesuaikan ukuran canvas agar kursor sinkron
+        function resizeCanvas() {
+            [{
+                canvas: staffCanvas,
+                pad: staffPad
+            }, {
+                canvas: borrowerCanvas,
+                pad: borrowerPad
+            }].forEach(obj => {
+                const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                obj.canvas.width = obj.canvas.offsetWidth * ratio;
+                obj.canvas.height = obj.canvas.offsetHeight * ratio;
+                obj.canvas.getContext("2d").scale(ratio, ratio);
+                obj.pad.clear(); // Reset pad saat resize agar tidak pecah
+            });
+        }
+
+        // Jalankan resize saat load dan saat jendela berubah ukuran
+        window.addEventListener("load", resizeCanvas);
+        window.addEventListener("resize", resizeCanvas);
+
+        // Fungsi Clear Manual
+        function clearStaff() {
+            staffPad.clear();
+            document.getElementById('staffContainer').classList.replace('border-red-500', 'border-gray-200');
+            document.getElementById('staffError').classList.add('hidden');
+        }
+
+        function clearBorrower() {
+            borrowerPad.clear();
+            document.getElementById('borrowerContainer').classList.replace('border-red-500', 'border-gray-200');
+            document.getElementById('borrowerError').classList.add('hidden');
+        }
+
+        // Handle Form Submit & Validasi
         document.getElementById('lendingForm').onsubmit = function(e) {
-            if (staffPad.isEmpty() || borrowerPad.isEmpty()) {
-                alert("Please provide both signatures");
-                e.preventDefault();
-                return;
+            let isValid = true;
+
+            // Validasi Staff
+            if (staffPad.isEmpty()) {
+                document.getElementById('staffContainer').classList.add('border-red-500');
+                document.getElementById('staffError').classList.remove('hidden');
+                isValid = false;
+            } else {
+                document.getElementById('staff_signature').value = staffPad.toDataURL();
             }
-            document.getElementById('staff_signature').value = staffPad.toDataURL();
-            document.getElementById('borrower_signature').value = borrowerPad.toDataURL();
+
+            // Validasi Borrower
+            if (borrowerPad.isEmpty()) {
+                document.getElementById('borrowerContainer').classList.add('border-red-500');
+                document.getElementById('borrowerError').classList.remove('hidden');
+                isValid = false;
+            } else {
+                document.getElementById('borrower_signature').value = borrowerPad.toDataURL();
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+                // Scroll ke area signature jika error
+                document.getElementById('staffContainer').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }
         };
 
+        // Role Selector Logic
         const roleSelector = document.getElementById('roleSelector');
         const classField = document.getElementById('classField');
         roleSelector.addEventListener('change', () => {
